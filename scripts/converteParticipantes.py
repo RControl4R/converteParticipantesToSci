@@ -16,7 +16,7 @@ if not os.path.isfile(ARQUIVO_ENTRADA):
     print(f"Erro: arquivo não encontrado -> {ARQUIVO_ENTRADA}")
     sys.exit(1)
 
-SEPARADOR = ";"
+SEPARADOR = ","
 
 # ==============================
 # FUNÇÕES
