@@ -48,26 +48,17 @@ def splash_screen():
     splash.configure(bg=COR_FUNDO)
 
     largura = 360
-    altura = 240
+    altura = 160
     x = (splash.winfo_screenwidth() // 2) - (largura // 2)
     y = (splash.winfo_screenheight() // 2) - (altura // 2)
     splash.geometry(f"{largura}x{altura}+{x}+{y}")
-
-    # Logo da empresa
-    try:
-        logo_img = tk.PhotoImage(file=caminho_recurso("logo.png"))
-        logo_label = tk.Label(splash, image=logo_img, bg=COR_FUNDO)
-        logo_label.image = logo_img
-        logo_label.pack(pady=(20, 10))
-    except Exception:
-        pass
 
     tk.Label(
         splash,
         text="Conversor Participantes → SCI",
         font=("Segoe UI", 12, "bold"),
         bg=COR_FUNDO
-    ).pack(pady=(0, 5))
+    ).pack(pady=(30, 5))
 
     tk.Label(
         splash,
@@ -201,5 +192,8 @@ rodape = tk.Label(
     anchor="e"
 )
 rodape.pack(pady=6, padx=10, fill="x")
+
+
+print(caminho_recurso("logo.png"))
 
 janela.mainloop()
