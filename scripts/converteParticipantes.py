@@ -12,7 +12,7 @@ CAMPOS_COM_ASPAS = {
 }
 
 # ==============================
-# FUNÇÕES
+# FUNÇÕES AUXILIARES
 # ==============================
 
 def limpar(valor):
@@ -25,9 +25,6 @@ def campo(campos, posicao):
         return ""
 
 def formatar_saida(valores):
-    """
-    Aplica aspas apenas nos campos exigidos
-    """
     resultado = []
     for i, valor in enumerate(valores, start=1):
         if i in CAMPOS_COM_ASPAS:
@@ -37,7 +34,7 @@ def formatar_saida(valores):
     return SEPARADOR_SAIDA.join(resultado)
 
 # ==============================
-# FUNÇÃO PRINCIPAL (REUTILIZÁVEL)
+# FUNÇÃO PRINCIPAL (Importar no _GUI)
 # ==============================
 
 def processar_arquivo(arquivo_entrada):
