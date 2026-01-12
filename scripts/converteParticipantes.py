@@ -41,7 +41,7 @@ def processar_arquivo(arquivo_entrada):
     if not os.path.isfile(arquivo_entrada):
         raise FileNotFoundError(f"Arquivo não encontrado: {arquivo_entrada}")
 
-    with open(arquivo_entrada, "r", encoding="utf-8") as f:
+    with open(arquivo_entrada, "r", encoding="latin-1", errors="replace") as f:
         linhas = f.readlines()
 
     registros_saida = []
