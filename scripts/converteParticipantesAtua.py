@@ -90,6 +90,17 @@ def processar_arquivo(caminho_excel=None):
     # Campo 14 → vazio
     col14 = pd.Series([""] * len(df))
 
+    # Campo 15 → coluna 03
+    col15 = df[2].astype(str)
+
+    # Campo 16 → vazio
+    col16 = pd.Series([""] * len(df))
+
+    # Campo 17 → fixo "N"
+    col17 = pd.Series(["N"] * len(df))
+
+
+
     # DataFrame final com 31 colunas
     df_final = pd.DataFrame({
         1: col1,
@@ -106,6 +117,9 @@ def processar_arquivo(caminho_excel=None):
         12: col12,
         13: col13,
         14: col14,
+        15: col15,
+        16: col16,
+        17: col17,
         #**extras
     })
 
