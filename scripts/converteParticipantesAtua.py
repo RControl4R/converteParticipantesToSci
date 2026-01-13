@@ -57,6 +57,29 @@ def colocar_aspas(valor):
 
 
 # ================================
+# Normalização de texto
+# ================================
+def normalizar(texto):
+    if texto is None:
+        return ""
+    return (
+        str(texto)
+        .strip()
+        .upper()
+        .replace("Á","A")
+        .replace("É","E")
+        .replace("Í","I")
+        .replace("Ó","O")
+        .replace("Ú","U")
+        .replace("Ã","A")
+        .replace("Õ","O")
+        .replace("Â","A")
+        .replace("Ê","E")
+        .replace("Ô","O")
+        .replace("Ç","C")
+    )
+
+# ================================
 # Processamento do arquivo
 # ================================
 def processar_arquivo(caminho_excel=None):
@@ -88,8 +111,25 @@ def processar_arquivo(caminho_excel=None):
         skiprows=2
     )
 
+    df_ibge = pd.read_csv("../input/ibge_municipios.csv", dtype=str, sep=";", encoding="latin-1")
+
+    # Normaliza cidade e UF vindos do Excel
+    df["CIDADE_NORM"] = df[12].apply(normalizar)  
+    df["UF_NORM"] = df[13].apply(normalizar)      
+
+    # Normaliza tabela IBGE
+    df_ibge["CIDADE_NORM"] = df_ibge["CODIGO_MUNICIPIO_IBGE"].apply(normalizar)
+    df_ibge["UF_NORM"] = df_ibge["UF"].apply(normalizar)
+
+    # Merge
+    df_merge = df.merge(
+        df_ibge[["UF_NORM", "CIDADE_NORM", "CODIGO_MUNICIPIO_IBGE"]],
+        on=["UF_NORM", "CIDADE_NORM"],
+        how="left"
+    )
+
     # ================================
-    # Mapeamento parcial
+    # Mapeamento de campos
     # ================================
 
     # Campo 01 → vazio
@@ -123,8 +163,8 @@ def processar_arquivo(caminho_excel=None):
     # Campo 09 → coluna 28
     col9 = df[27].astype(str)
 
-    # Campo 10 → vazio
-    col10 = pd.Series([""] * len(df))
+    # Campo 10 → código IBGE do município
+    col10 = df_ibge["CODIGO_MUNICIPIO_IBGE"].fillna("")
 
     # Campo 11 → coluna 22
     col11 = df[21].astype(str)
@@ -175,7 +215,6 @@ def processar_arquivo(caminho_excel=None):
     col26 = pd.Series(["1"] * len(df))
 
 
-
     # DataFrame final com 31 colunas
     df_final = pd.DataFrame({
         1: col1,
@@ -217,8 +256,6 @@ def processar_arquivo(caminho_excel=None):
     pasta_saida = os.path.dirname(arquivo_excel)
     nome_base = os.path.splitext(os.path.basename(arquivo_excel))[0]
     output_path = os.path.join(pasta_saida, f"{nome_base}_SCI.txt")
-
-    print(df_final[18].head())
 
 
     # Geração do TXT
