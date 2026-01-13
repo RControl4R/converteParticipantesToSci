@@ -118,15 +118,16 @@ def processar_arquivo(caminho_excel=None):
     df["UF_NORM"] = df[13].apply(normalizar)      
 
     # Normaliza tabela IBGE
-    df_ibge["CIDADE_NORM"] = df_ibge["CODIGO_MUNICIPIO_IBGE"].apply(normalizar)
+    df_ibge["CIDADE_NORM"] = df_ibge["MUNICIPIO_IBGE"].apply(normalizar)
     df_ibge["UF_NORM"] = df_ibge["UF"].apply(normalizar)
 
-    # Merge
-    df_merge = df.merge(
-        df_ibge[["UF_NORM", "CIDADE_NORM", "CODIGO_MUNICIPIO_IBGE"]],
-        on=["UF_NORM", "CIDADE_NORM"],
-        how="left"
+    mapa_ibge = (
+        df_ibge
+        .drop_duplicates(subset=["CIDADE_NORM", "UF_NORM"])
+        .set_index(["CIDADE_NORM", "UF_NORM"])["CODIGO_MUNICIPIO_IBGE"]
+        .to_dict()
     )
+
 
     # ================================
     # Mapeamento de campos
@@ -163,14 +164,22 @@ def processar_arquivo(caminho_excel=None):
     # Campo 09 → coluna 28
     col9 = df[27].astype(str)
 
-    # Campo 10 → código IBGE do município
-    col10 = df_ibge["CODIGO_MUNICIPIO_IBGE"].fillna("")
-
     # Campo 11 → coluna 22
     col11 = df[21].astype(str)
 
     # Campo 12 → coluna 23
     col12 = df[22].astype(str)
+
+    # Campo 10 → código IBGE (usando cidade + UF da SAÍDA)
+    cidade_norm = col11.apply(normalizar)
+    uf_norm = col12.apply(normalizar)
+
+    col10 = [
+        mapa_ibge.get((c, u), "")
+        for c, u in zip(cidade_norm, uf_norm)
+    ]
+    col10 = pd.Series(col10)
+
 
     # Campo 13 → vazio
     col13 = pd.Series([""] * len(df))
