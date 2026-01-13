@@ -9,6 +9,42 @@ INPUT_FOLDER = "../input/"
 OUTPUT_FOLDER = "../output/"
 
 # ================================
+# Funções auxiliares  
+# ================================
+def formatar_data(valor):
+    if valor is None or str(valor).strip() == "":
+        return ""
+    valor = str(valor).strip()
+    
+    # yyyy-mm-dd ou yyyy-mm-dd hh:mm:ss
+    if "-" in valor and len(valor.split("-")[0]) == 4:
+        try:
+            data = valor.split(" ")[0]  # remove hora
+            ano, mes, dia = data.split("-")
+            return f"{ano}{mes}{dia}"
+        except:
+            pass
+
+    # dd/mm/yyyy
+    if "/" in valor:
+        try:
+            dia, mes, ano = valor.split("/")
+            return f"{ano}{mes}{dia}"
+        except:
+            pass
+
+    # número serial do Excel
+    try:
+        numero = float(valor)
+        data = pd.to_datetime(numero, unit="D", origin="1899-12-30")
+        return data.strftime("%Y%m%d")
+    except:
+        pass
+
+    return valor
+
+
+# ================================
 # Processamento do arquivo
 # ================================
 def processar_arquivo(caminho_excel=None):
@@ -99,6 +135,14 @@ def processar_arquivo(caminho_excel=None):
     # Campo 17 → fixo "N"
     col17 = pd.Series(["N"] * len(df))
 
+    # Campo 18 → coluna 12
+    col18 = df[11].apply(formatar_data)
+
+    # Campo 19 → vazio
+    col19 = pd.Series([""] * len(df))
+
+    # Campo 20 → vazio
+    col20 = pd.Series([""] * len(df))
 
 
     # DataFrame final com 31 colunas
@@ -120,6 +164,9 @@ def processar_arquivo(caminho_excel=None):
         15: col15,
         16: col16,
         17: col17,
+        18: col18,
+        19: col19,
+        20: col20,
         #**extras
     })
 
@@ -128,7 +175,7 @@ def processar_arquivo(caminho_excel=None):
     nome_base = os.path.splitext(os.path.basename(arquivo_excel))[0]
     output_path = os.path.join(pasta_saida, f"{nome_base}_SCI.txt")
 
-    print(df_final[[10, 11]].head())
+    print(df_final[18].head())
 
 
     # Geração do TXT
