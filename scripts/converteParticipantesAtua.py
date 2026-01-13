@@ -43,6 +43,18 @@ def formatar_data(valor):
 
     return valor
 
+CAMPOS_COM_ASPAS = {
+    3, 5, 6, 7, 8, 9,
+    11, 12, 13, 14, 15, 16,
+    17, 18, 19, 20, 24, 25, 26
+}
+
+# ================================
+def colocar_aspas(valor):
+    if valor is None or str(valor) == "":
+        return "\"\""
+    return f"\"{valor}\""
+
 
 # ================================
 # Processamento do arquivo
@@ -144,6 +156,25 @@ def processar_arquivo(caminho_excel=None):
     # Campo 20 → vazio
     col20 = pd.Series([""] * len(df))
 
+    # Campo 21 → fixo "0"
+    col21 = pd.Series(["0"] * len(df))
+
+    # Campo 22 → fixo "2"
+    col22 = pd.Series(["2"] * len(df))
+
+    # Campo 23 → vazio
+    col23 = pd.Series([""] * len(df))
+
+    # Campo 24 → fixo "S"
+    col24 = pd.Series(["S"] * len(df))
+
+    # Campo 25 → vazio
+    col25 = pd.Series([""] * len(df))
+
+    # Campo 26 → fixo "1"
+    col26 = pd.Series(["1"] * len(df))
+
+
 
     # DataFrame final com 31 colunas
     df_final = pd.DataFrame({
@@ -167,8 +198,20 @@ def processar_arquivo(caminho_excel=None):
         18: col18,
         19: col19,
         20: col20,
+        21: col21,
+        22: col22,
+        23: col23,
+        24: col24,
+        25: col25,
+        26: col26,
         #**extras
     })
+
+    # ----------------------------
+    # Aplicação de aspas
+    # ----------------------------
+    for campo in CAMPOS_COM_ASPAS:
+        df_final[campo] = df_final[campo].apply(colocar_aspas)
 
     # Nome do arquivo de saída
     pasta_saida = os.path.dirname(arquivo_excel)
