@@ -180,7 +180,6 @@ def processar_arquivo(caminho_excel=None):
     ]
     col10 = pd.Series(col10)
 
-
     # Campo 13 → vazio
     col13 = pd.Series([""] * len(df))
 
@@ -223,7 +222,6 @@ def processar_arquivo(caminho_excel=None):
     # Campo 26 → fixo "1"
     col26 = pd.Series(["1"] * len(df))
 
-
     # DataFrame final com 31 colunas
     df_final = pd.DataFrame({
         1: col1,
@@ -265,7 +263,6 @@ def processar_arquivo(caminho_excel=None):
     pasta_saida = os.path.dirname(arquivo_excel)
     nome_base = os.path.splitext(os.path.basename(arquivo_excel))[0]
     output_path = os.path.join(pasta_saida, f"{nome_base}_SCI.txt")
-
 
     # Geração do TXT
     df_final.to_csv(
